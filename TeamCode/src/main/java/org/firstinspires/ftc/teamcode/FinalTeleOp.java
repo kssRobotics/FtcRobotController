@@ -24,7 +24,7 @@ public class FinalTeleOp extends LinearOpMode {
     private DigitalChannel bottomLimitSwitch1 = null;
     //private DigitalChannel bottomLimitSwitch2= null;
 
-    double motorPower = (0.5);
+    double motorPower = (.8);
 
 
     @Override
@@ -64,6 +64,7 @@ public class FinalTeleOp extends LinearOpMode {
         telemetry.addData("RightMotorDirection", rightDrive.getDirection());
         telemetry.addData("ArmMotorDirection", armMotor1.getDirection());
         telemetry.addData("ClawServoDirection", clawServo.getDirection());
+        telemetry.addData("ClawPosition", clawServo.getPosition());
         telemetry.update();
 
 
@@ -72,6 +73,7 @@ public class FinalTeleOp extends LinearOpMode {
             armControl();
             limitSwitch();
             claw();
+            crServo();
             telemetry.addData("Velocity", ((DcMotorEx) armMotor1).getVelocity());
             telemetry.addData("Top", topLimitSwitch1.getState());
             telemetry.addData("Bottom ", bottomLimitSwitch1.getState());
@@ -83,19 +85,19 @@ public class FinalTeleOp extends LinearOpMode {
     }
 
     private void chasisDrive() {
-        leftDrive.setPower(-gamepad1.left_stick_x * motorPower + gamepad1.left_stick_y * motorPower);
-        rightDrive.setPower(gamepad1.left_stick_x * motorPower + gamepad1.left_stick_y * motorPower);
+        leftDrive.setPower(-gamepad1.left_stick_y * motorPower + gamepad1.left_stick_x * motorPower);
+        rightDrive.setPower(gamepad1.left_stick_y * motorPower + gamepad1.left_stick_x * motorPower);
         telemetry.addData("leftStickPositionx", gamepad1.left_stick_x);
         telemetry.addData("leftStickPositionY", gamepad1.left_stick_y);
     }
 
     private void armControl() {
         if (gamepad1.y) {
-            ((DcMotorEx) armMotor1).setVelocity(1500);
-            ((DcMotorEx) armMotor2).setVelocity(1500);
+            ((DcMotorEx) armMotor1).setVelocity(2200);
+            ((DcMotorEx) armMotor2).setVelocity(2200);
         } else if (gamepad1.a) {
-            ((DcMotorEx) armMotor1).setVelocity(-1500);
-            ((DcMotorEx) armMotor2).setVelocity(-1500);
+            ((DcMotorEx) armMotor1).setVelocity(-2200);
+            ((DcMotorEx) armMotor2).setVelocity(-2200);
         } else if (gamepad1.b) {
             ((DcMotorEx) armMotor1).setVelocity(0);
             ((DcMotorEx) armMotor2).setVelocity(0);
@@ -104,8 +106,7 @@ public class FinalTeleOp extends LinearOpMode {
     }
 
     private void limitSwitch() {
-        if (topLimitSwitch1.getState() == true && bottomLimitSwitch1.getState() == false) ;
-        {
+        if (topLimitSwitch1.getState() == true && bottomLimitSwitch1.getState() == false) {
             ((DcMotorEx) armMotor1).setVelocity(-240);
             ((DcMotorEx) armMotor2).setVelocity(-240);
             sleep(250);
@@ -127,11 +128,20 @@ public class FinalTeleOp extends LinearOpMode {
         }
     }
     private void claw(){
-        clawServo.setPosition(1- gamepad1.right_trigger);
-        telemetry.addData("Position", clawServo.getPosition());
+        if (gamepad1.left_bumper)
+            clawServo.setPosition(1);
+            clawServo.setPosition(0);
+            telemetry.addData("Position", clawServo.getPosition());
 
     }
-
+    private void crServo(){
+        if (gamepad1.dpad_up)
+            crServo.setPower(1);
+        if (gamepad1.dpad_down)
+            crServo.setPower(-1);
+        if (gamepad1.dpad_right)
+            crServo.setPower(0);
+    }
 }
 
 
